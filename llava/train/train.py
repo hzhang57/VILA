@@ -57,7 +57,7 @@ local_rank = None
 
 if "WANDB_PROJECT" not in os.environ:
     # Default to WANDB project "VILA".
-    os.environ["WANDB_PROJECT"] = "VILA"
+    os.environ["WANDB_PROJECT"] = "VILA-CVPR24"
 
 
 def maybe_zero_3(param, ignore_status=False, name=None):

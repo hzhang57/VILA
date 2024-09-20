@@ -413,7 +413,7 @@ class LlavaMetaForCausalLM(ABC):
         tokenizer_model_max_length = getattr(self.llm.config, "tokenizer_model_max_length", None)
         if tokenizer_model_max_length is not None:
             if any(len(x) > tokenizer_model_max_length for x in new_input_embeds):
-                warnings.warn("Inputs truncated!")
+                warnings.warn("WARNING: Inputs truncated!, max {}".format(tokenizer_model_max_length))
             new_input_embeds = [x[:tokenizer_model_max_length] for x in new_input_embeds]
             new_labels = [x[:tokenizer_model_max_length] for x in new_labels]
         # Combine them

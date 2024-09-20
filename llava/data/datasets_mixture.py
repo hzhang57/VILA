@@ -70,3 +70,17 @@ def register_datasets_mixtures():
         description="Original data source: https://sharegpt4v.github.io/ 655K llava_1_5_sft data relablled w/ ShareGPT4V captioner.",
     )
     add_dataset(sharegpt4v_sft)
+
+    # Add STAR-QA dataset by Hao Zhang
+    star_qa_imgx4 = Dataset(
+        dataset_name="star_qa_imgx4",
+        dataset_type="star_qa",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4)
+
+
+
+

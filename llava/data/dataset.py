@@ -2005,6 +2005,325 @@ class VILAPanda70m_LongSeq(Dataset):
 
         return data_dict
 
+class LazyStarQADataset(Dataset):
+    """Dataset for supervised fine-tuning.
+    This class is originally implemented by the LLaVA team and modified by
+    Hao Zhang, for STAR QA
+    """
+
+    def __init__(self, data_path: str,
+                 tokenizer: transformers.PreTrainedTokenizer,
+                 data_args: DataArguments,
+                 image_folder: str,
+                 training_args: TrainingArguments,
+                 use_subset: int=1):
+        super(LazyStarQADataset, self).__init__()
+        list_data_dict = json.load(open(data_path, "r"))
+
+        # rank0_print("Formatting inputs...Skip in lazy mode")
+        print("Formatting inputs...Skip in lazy mode")
+        self.tokenizer = tokenizer
+
+        if use_subset == 1:
+            self.list_data_dict = list_data_dict
+        else:
+            #use 1/use_subset
+            sub_set = []
+            for ii, x in enumerate(list_data_dict):
+                if ii % use_subset == 0:
+                    sub_set.append(x)
+            self.list_data_dict = sub_set
+
+        self.data_args = data_args
+        self.image_folder = image_folder
+        print("Len list_data_dict {}".format(len(self.list_data_dict)))
+
+        # num_frames
+        one_conv = self.list_data_dict[0]["conversations"][0]["value"]
+        self.num_frames = one_conv.count("<image>")
+
+
+    def __len__(self):
+        return len(self.list_data_dict)
+
+    @property
+    def lengths(self):
+        length_list = []
+        for sample in self.list_data_dict:
+            #img_tokens = 128 if 'image' in sample else 0
+            img_tokens = 576 * self.num_frames if self.num_frames else 0
+            length_list.append(sum(len(conv['value'].split()) for conv in sample['conversations']) + img_tokens)
+        return length_list
+
+    @property
+    def modality_lengths(self):
+        length_list = []
+        for sample in self.list_data_dict:
+            cur_len = sum(len(conv['value'].split()) for conv in sample['conversations'])
+            cur_len = self.num_frames * 576 // 2 + cur_len
+            #cur_len = cur_len if self.num_frames else -cur_len
+            #cur_len = cur_len if 'image' in sample else -cur_len
+            length_list.append(cur_len)
+        return length_list
+    
+    @staticmethod
+    def _process_image(image_file, data_args, image_folder, resize=False):
+        processor = data_args.image_processor
+        if isinstance(image_file, str):
+            if image_folder is not None:
+                image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+            else:
+                image = Image.open(image_file).convert('RGB')
+        else:
+            # image is stored in bytearray
+            image = image_file
+        if resize:
+            if hasattr(data_args.image_processor, "crop_size"):
+                # CLIP vision tower
+                crop_size = data_args.image_processor.crop_size
+            else:
+                # SIGLIP vision tower
+                assert hasattr(data_args.image_processor, "size")
+                crop_size = data_args.image_processor.size
+            image = image.resize((crop_size['height'], crop_size['width']))
+        if data_args.image_aspect_ratio == 'pad':
+            def expand2square(pil_img, background_color):
+                width, height = pil_img.size
+                if width == height:
+                    return pil_img
+                elif width > height:
+                    result = Image.new(pil_img.mode, (width, width), background_color)
+                    result.paste(pil_img, (0, (width - height) // 2))
+                    return result
+                else:
+                    result = Image.new(pil_img.mode, (height, height), background_color)
+                    result.paste(pil_img, ((height - width) // 2, 0))
+                    return result
+            image = expand2square(image, tuple(int(x*255) for x in processor.image_mean))
+            image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+        else:
+            image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+        return image
+    
+    def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+        sources = self.list_data_dict[i]
+        if isinstance(i, int):
+            sources = [sources]
+        assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
+
+        #if 'image' in sources[0]:
+        if self.num_frames:
+            images_file = self.list_data_dict[i]['frames']
+            images = torch.stack(
+                    [
+                    self._process_image(image_pth, self.data_args, self.image_folder)
+                    for image_pth in images_file
+                    ]
+                )
+
+            #image = self._process_image(image_file, self.data_args, self.image_folder)
+            #sources = preprocess_multimodal(
+            #    copy.deepcopy([e["conversations"] for e in sources]),
+            #    self.data_args)
+            sources = copy.deepcopy([e["conversations"] for e in sources])
+        else:
+            sources = copy.deepcopy([e["conversations"] for e in sources])
+            images = None
+
+        ## DEBUG
+        #print("Sources {}, Len(images) {}".format(sources, len(images)))
+
+        data_dict = preprocess(
+            sources,
+            self.tokenizer,
+            has_image=self.num_frames > 0)
+
+        if isinstance(i, int):
+            data_dict = dict(input_ids=data_dict["input_ids"][0],
+                             labels=data_dict["labels"][0])
+
+        # image exist in the data
+        #if 'image' in self.list_data_dict[i]:
+        if self.num_frames:
+            #data_dict['image'] = images.unsqueeze(0)
+            data_dict['image'] = images
+            #print("video qa", images.shape)
+        else:
+            # llava 1.5 way
+            # image does not exist in the data, but the model is multimodal
+            # crop_size = self.data_args.image_processor.crop_size
+            # data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+            # vila way
+            data_dict['image'] = None
+        return data_dict
+
+
+class LazyStarQADataset_Decord(Dataset):
+    """Dataset for supervised fine-tuning.
+    This class is originally implemented by the LLaVA team and modified by
+    Ji Lin and Haotian Tang.
+    """
+
+    def __init__(self, data_path: str,
+                 tokenizer: transformers.PreTrainedTokenizer,
+                 data_args: DataArguments,
+                 image_folder: str,
+                 training_args: TrainingArguments):
+        super(LazyStarQADataset_Decord, self).__init__()
+        data_dict = json.load(open(data_path, "r"))
+        list_data_dict = data_dict
+        #list_data_dict = data_dict["list"]
+        #config = data_dict['config']
+
+        # rank0_print("Formatting inputs...Skip in lazy mode")
+        print("Formatting inputs...Skip in lazy mode")
+        self.tokenizer = tokenizer
+        self.list_data_dict = list_data_dict
+        self.data_args = data_args
+        self.video_folder = image_folder
+        print("Len list_data_dict {}".format(len(self.list_data_dict)))
+
+        self.num_video_frames = data_args.num_video_frames
+        #self.max_frame = config['max_frame']
+        #self.skip_interval = config['skip_interval']
+
+        # num_frames
+        #one_conv = self.list_data_dict[0]["conversations"][0]["value"]
+        #self.num_frames = 64 # max-mum number of frames
+        #self.num_frames = one_conv.count("<image>")
+
+
+    def __len__(self):
+        return len(self.list_data_dict)
+
+    @property
+    def lengths(self):
+        length_list = []
+        for sample in self.list_data_dict:
+            # Estimate num_frames
+            num_frames = self.max_frame #TODO
+            img_tokens = 576 * num_frames if self.num_frames else 0
+            length_list.append(sum(len(conv['value'].split()) for conv in sample['conversations']) + img_tokens)
+        return length_list
+
+    @property
+    def modality_lengths(self):
+        length_list = []
+        for sample in self.list_data_dict:
+            # Estimate num_frames
+            num_frames = self.max_frame  #TODO
+            cur_len = sum(len(conv['value'].split()) for conv in sample['conversations'])
+            cur_len = num_frames * 576 // 2 + cur_len
+            length_list.append(cur_len)
+        return length_list
+    
+    @staticmethod
+    def _process_image(frame, data_args, resize=False):
+        processor = data_args.image_processor
+        #if isinstance(image_file, str):
+        #    if image_folder is not None:
+        #        image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+        #    else:
+        #        image = Image.open(image_file).convert('RGB')
+        #else:
+        #    # image is stored in bytearray
+        #    image = image_file
+
+        # Convert the RGB frame to a PIL image
+        image = Image.fromarray(frame)
+
+        if resize:
+            if hasattr(data_args.image_processor, "crop_size"):
+                # CLIP vision tower
+                crop_size = data_args.image_processor.crop_size
+            else:
+                # SIGLIP vision tower
+                assert hasattr(data_args.image_processor, "size")
+                crop_size = data_args.image_processor.size
+            image = image.resize((crop_size['height'], crop_size['width']))
+        if data_args.image_aspect_ratio == 'pad':
+            def expand2square(pil_img, background_color):
+                width, height = pil_img.size
+                if width == height:
+                    return pil_img
+                elif width > height:
+                    result = Image.new(pil_img.mode, (width, width), background_color)
+                    result.paste(pil_img, (0, (width - height) // 2))
+                    return result
+                else:
+                    result = Image.new(pil_img.mode, (height, height), background_color)
+                    result.paste(pil_img, ((height - width) // 2, 0))
+                    return result
+            image = expand2square(image, tuple(int(x*255) for x in processor.image_mean))
+            image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+        else:
+            image = processor.preprocess(image, return_tensors='pt')['pixel_values'][0]
+        return image
+    
+    def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+        sources = self.list_data_dict[i]
+        if isinstance(i, int):
+            sources = [sources]
+        assert len(sources) == 1, "Don't know why it is wrapped to a list"  # FIXME
+
+        if '<video>' in sources[0]['conversations'][0]['value']:
+            # Decord video with frame
+            video_file = self.list_data_dict[i]['video']
+            video_pth = self.video_folder + video_file
+
+            #print(video_pth + "\n")
+            if "start_secs" in self.list_data_dict[i]:
+                start_secs = self.list_data_dict[i]['start_secs']
+                end_secs = self.list_data_dict[i]['end_secs']
+                frames, frame_indices =  decord_video_given_start_end_seconds(video_pth, 
+                        start_secs=start_secs, end_secs=end_secs,
+                        num_video_frames=self.num_video_frames)
+            else:
+                frames, frame_indices =  decord_video_given_start_end_seconds(video_pth, 
+                        num_video_frames=self.num_video_frames)
+                #print("HERE frames {} frames shape {}".format(frame_indices, frames.shape))
+
+            num_images = len(frames)
+            #images_file = self.list_data_dict[i]['frames']
+            images = torch.stack(
+                    [
+                    self._process_image(frame, self.data_args)
+                    for frame in frames
+                    ]
+                )
+
+            sources = copy.deepcopy([e["conversations"] for e in sources])
+            #replace <video> with <image>\n x num_images
+            img_tks = "<image>\n" * num_images
+            #print("HERE",sources[0][0])
+            sources[0][0]["value"] = sources[0][0]["value"].replace("<video>\n", img_tks)
+        else:
+            sources = copy.deepcopy([e["conversations"] for e in sources])
+            images = None
+
+        data_dict = preprocess(
+            sources,
+            self.tokenizer,
+            has_image=num_images>0)
+
+        if isinstance(i, int):
+            data_dict = dict(input_ids=data_dict["input_ids"][0],
+                             labels=data_dict["labels"][0])
+
+        # image exist in the data
+        #if 'image' in self.list_data_dict[i]:
+        if num_images:
+            #data_dict['image'] = images.unsqueeze(0)
+            data_dict['image'] = images
+            #print("video qa", images.shape)
+        else:
+            # llava 1.5 way
+            # image does not exist in the data, but the model is multimodal
+            # crop_size = self.data_args.image_processor.crop_size
+            # data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+            # vila way
+            data_dict['image'] = None
+        return data_dict
 
 @dataclass
 class DataCollatorForSupervisedDataset:
@@ -2487,6 +2806,14 @@ def build_datasets(
                 image_folder = dataset.image_path
         elif dataset_type == "panda70m_sp":
             dataset_cls = VILAPanda70m_LongSeq
+        elif dataset_type == "star_qa":
+            dataset_cls = LazyStarQADataset
+            if hasattr(dataset, "image_path"):
+                image_folder = dataset.image_path
+        elif dataset_type == "star_qa_decord":
+            dataset_cls = LazyStarQADataset_Decord
+            if hasattr(dataset, "image_path"):
+                image_folder = dataset.image_path
         else:
             raise NotImplementedError(f"{dataset_type} is not supported.")
         data_args.meta_path = getattr(dataset, "meta_path", None)
