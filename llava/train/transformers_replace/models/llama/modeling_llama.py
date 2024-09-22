@@ -1040,16 +1040,38 @@ class LlamaForCausalLM(LlamaPreTrainedModel):
 
         loss = None
         if labels is not None:
+            ## Original Loss
+            ## Shift so that tokens < n predict n
+            #shift_logits = logits[..., :-1, :].contiguous()
+            #shift_labels = labels[..., 1:].contiguous()
+            ## Flatten the tokens
+            #loss_fct = CrossEntropyLoss()
+            #shift_logits = shift_logits.view(-1, self.config.vocab_size)
+            #shift_labels = shift_labels.view(-1)
+            ## Enable model parallelism
+            #shift_labels = shift_labels.to(shift_logits.device)
+            #loss = loss_fct(shift_logits, shift_labels)
+
+            ## NEW LOSS
             # Shift so that tokens < n predict n
+            #print("logits {}, labels {}".format(logits.shape, labels))
+            #print("labels {}".format(torch.sum(labels> 0, dim=1)))
             shift_logits = logits[..., :-1, :].contiguous()
             shift_labels = labels[..., 1:].contiguous()
             # Flatten the tokens
-            loss_fct = CrossEntropyLoss()
+            #loss_fct = CrossEntropyLoss()
+            loss_fct = CrossEntropyLoss(reduction="none")
             shift_logits = shift_logits.view(-1, self.config.vocab_size)
             shift_labels = shift_labels.view(-1)
+            word_weights_mean = transform_tensor(shift_labels)
             # Enable model parallelism
             shift_labels = shift_labels.to(shift_logits.device)
             loss = loss_fct(shift_logits, shift_labels)
+            loss = loss * word_weights_mean
+            num_samples = len(seqlens_in_batch)
+            loss = loss.sum() / num_samples
+            #print("loss_fct {}, shift_labels {}, weight {}".format(loss.shape, shift_labels.shape, word_weights_mean))
+            #print("shift_labels {}".format(shift_labels))
 
         if not return_dict:
             output = (logits,) + outputs[1:]
