@@ -121,26 +121,29 @@ def main(args):
         index2ans = line["index2ans"]
         all_choices = line["all_choices"]
         
+        use_image = False
         with torch.inference_mode():
             if args.num_video_frames > 0:
                 # Load Image
                 if 'image' in line:
                     image_files = [os.path.join(args.image_folder, image) for image in [line["image"]]]
+                    use_image = True
                 elif 'frames' in line:
                     image_files = [os.path.join(args.image_folder, image) for image in line["frames"]]
+                    use_image = True
                 else:
                     #not implementd
+                    use_image = False
                     print("Not implemented yet")
-
-                images = load_images(image_files)
-
-                n_images = len(images)
-                print(images[0].size, n_images)
-                images_tensor = process_images(
-                    images,
-                    image_processor,
-                    model.config
-                ).to(model.device, dtype=torch.float16)
+                if use_image:
+                    images = load_images(image_files)
+                    n_images = len(images)
+                    print(images[0].size, n_images)
+                    images_tensor = process_images(
+                        images,
+                        image_processor,
+                        model.config
+                    ).to(model.device, dtype=torch.float16)
                     
             #print("HEHREH ", qs)
             conv = conv_templates[args.conv_mode].copy()
@@ -156,7 +159,7 @@ def main(args):
             stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
             keywords = [stop_str]
             stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
-            if args.num_video_frames > 0:
+            if use_image:
                 output_ids = model.generate(
                     input_ids,
                     images=images_tensor,
