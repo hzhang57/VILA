@@ -81,6 +81,22 @@ def register_datasets_mixtures():
     )
     add_dataset(star_qa_imgx4)
 
+    star_qa_imgx4_Q_Gen_Prog = Dataset(
+        dataset_name="star_qa_imgx4_Q_Gen_Prog",
+        dataset_type="star_qa",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Q_Gen_Prog_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Q_Gen_Prog)
 
+    star_qa_imgx4_Prog_Graph = Dataset(
+        dataset_name="star_qa_imgx4_Prog_Graph",
+        dataset_type="torch",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Graph_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Prog_Graph)
 
 
