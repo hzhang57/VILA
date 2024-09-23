@@ -40,6 +40,30 @@ logger = logging.get_logger(__name__)
 
 _CONFIG_FOR_DOC = "LlamaConfig"
 
+def transform_tensor(tensor, ignore=-100):
+    tensor = torch.tensor(tensor, dtype=torch.float32)
+    result = torch.zeros_like(tensor)
+    
+    start_idx = None
+    length = 0
+    
+    for i in range(len(tensor)):
+        if tensor[i] != ignore:
+            if start_idx is None:
+                start_idx = i
+            length += 1
+        else:
+            if start_idx is not None:
+                result[start_idx:i] = 1.0 / length
+                start_idx = None
+                length = 0
+    
+    if start_idx is not None:
+        result[start_idx:] = 1.0 / length
+    
+    return result
+
+
 
 def _get_unpad_data(attention_mask, seqlens_in_batch):
     if seqlens_in_batch is None:
