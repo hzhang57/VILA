@@ -14,9 +14,13 @@ nproc=2
 
 bs=1
 accu_steps=32
-DATA_SELECT="star_qa_imgx4"
-OUTPUT="./ckpts/star_imgx4_vila3b"
+#DATA_SELECT="star_qa_imgx4"
 
+#DATA_SELECT="star_qa_imgx4_Q_Gen_Prog"
+#OUTPUT="./ckpts/star_imgx4_Q_Gen_Prog_vila3b_loss2"
+
+DATA_SELECT="star_qa_imgx4_Prog_Graph"
+OUTPUT="./ckpts/star_imgx4_Prog_Graph_vila3b_loss2"
 
 MODEL_BASE=Efficient-Large-Model/VILA1.5-3B
 # Final output checkpoint path
