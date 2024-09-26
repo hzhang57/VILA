@@ -57,6 +57,9 @@ from llava.train.sequence_parallel import (
     get_pg_manager,
 )
 from llava.utils.tokenizer import preprocess_conversation
+from llava.data.decord_func import decord_video_given_start_end_seconds
+
+
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 PIL.Image.MAX_IMAGE_PIXELS = 1000000000

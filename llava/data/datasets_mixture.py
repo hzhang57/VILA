@@ -72,31 +72,86 @@ def register_datasets_mixtures():
     add_dataset(sharegpt4v_sft)
 
     # Add STAR-QA dataset by Hao Zhang
-    star_qa_imgx4 = Dataset(
-        dataset_name="star_qa_imgx4",
+    # Program + Image -> Answer
+    star_qa_imgx4_Program_Image = Dataset(
+        dataset_name="star_qa_imgx4_Program_Image",
         dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_3.0.json",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Image_v3.0.json",
         image_path="./dataset/star/charadesv1_480/frames/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
-    add_dataset(star_qa_imgx4)
+    add_dataset(star_qa_imgx4_Program_Image)
 
-    star_qa_imgx4_Q_Gen_Prog = Dataset(
-        dataset_name="star_qa_imgx4_Q_Gen_Prog",
+    # Query + Image -> Program
+    # Query + Program + Image -> Answer
+    star_qa_imgx4_Query_Image_Gen_Program = Dataset(
+        dataset_name="star_qa_imgx4_Query_Image_Gen_Program",
         dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Q_Gen_Prog_v3.0.json",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_Gen_Program_v3.0.json",
         image_path="./dataset/star/charadesv1_480/frames/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
-    add_dataset(star_qa_imgx4_Q_Gen_Prog)
+    add_dataset(star_qa_imgx4_Query_Image_Gen_Program)
 
-    star_qa_imgx4_Prog_Graph = Dataset(
-        dataset_name="star_qa_imgx4_Prog_Graph",
+    # Query + Image -> Answer
+    star_qa_imgx4_Query_Image = Dataset(
+        dataset_name="star_qa_imgx4_Query_Image",
+        dataset_type="star_qa",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Query_Image)
+
+    # Query + Program + Graph + Image -> Answer
+    star_qa_imgx4_Query_Program_Graph_Image = Dataset(
+        dataset_name="star_qa_imgx4_Query_Program_Graph_Image",
+        dataset_type="star_qa",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Graph_Image_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Query_Program_Graph_Image)
+
+    # Query + Program + Graph + Image -> Answer
+    star_qa_imgx4_Query_Program_Image = Dataset(
+        dataset_name="star_qa_imgx4_Query_Program_Image",
+        dataset_type="star_qa",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Image_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Query_Program_Image)
+
+
+    # Program + Graph -> Answer
+    star_qa_imgx4_Program_Graph = Dataset(
+        dataset_name="star_qa_imgx4_Program_Graph",
         dataset_type="torch",
         data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Graph_v3.0.json",
         image_path="./dataset/star/charadesv1_480/frames/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
-    add_dataset(star_qa_imgx4_Prog_Graph)
+    add_dataset(star_qa_imgx4_Program_Graph)
 
 
+    # Query + Graph -> Answer
+    star_qa_imgx4_Query_Graph = Dataset(
+        dataset_name="star_qa_imgx4_Query_Graph",
+        dataset_type="torch",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Graph_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/frames/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_imgx4_Query_Graph)
+
+
+    # Query + Video -> Answer
+    star_qa_Query_Video = Dataset(
+        dataset_name="star_qa_Query_Video",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots/STAR_train_NEAT_Query_Video_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Video)
