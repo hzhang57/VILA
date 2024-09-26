@@ -34,9 +34,10 @@ def random_sample_frame(frame_indices, max_frames):
 def uniform_sample_frame(frame_indices, max_frames):
     cur_len = len(frame_indices)
     if cur_len > max_frames:
-        frame_indices = np.linspace(0, cur_len-1, max_frames, dtype=int)
-    #print(frame_indices)
+        indices = np.linspace(0, cur_len-1, max_frames, dtype=int)
+        frame_indices = [frame_indices[i] for i in indices]
     return frame_indices
+ 
 
 def random_start_frame(frame_indices, max_frames):
     cur_len = len(frame_indices)
