@@ -96,6 +96,7 @@ def decord_video_given_start_end_seconds(video_pth:str, start_secs:float=-1, end
         #frames = np.zeros(2, 224, 224, 3 )
         frames = np.zeros((2,224, 224, 3), dtype=np.uint8)
         frame_indices = [0, 1]
+    #print(frame_indices)
     return frames, frame_indices
 
 

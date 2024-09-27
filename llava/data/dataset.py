@@ -2278,6 +2278,7 @@ class LazyStarQADataset_Decord(Dataset):
             if "start_secs" in self.list_data_dict[i]:
                 start_secs = self.list_data_dict[i]['start_secs']
                 end_secs = self.list_data_dict[i]['end_secs']
+                print("st-ed {} {}".format(start_secs, end_secs))
                 frames, frame_indices =  decord_video_given_start_end_seconds(video_pth, 
                         start_secs=start_secs, end_secs=end_secs,
                         num_video_frames=self.num_video_frames)
