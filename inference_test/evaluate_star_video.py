@@ -134,6 +134,7 @@ def main(args):
                     frames, frame_indices =  decord_video_given_start_end_seconds(video_path, 
                         start_secs=start_secs, end_secs=end_secs,
                         num_video_frames=args.num_video_frames)
+                    print("st-ed {}-{}".format(start_secs, end_secs))
                 else:
                     frames, frame_indices =  decord_video_given_start_end_seconds(video_path,
                         num_video_frames=args.num_video_frames)
