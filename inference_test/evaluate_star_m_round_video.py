@@ -57,6 +57,11 @@ class TypeAccuracy(object):
         if "{}".format(pred) in gt:
             self.correct += 1
 
+    def update_program(self, gt, pred):
+        self.total += 1
+        if "{}".format(pred) == gt:
+            self.correct += 1
+
     def get_accuracy(self):
         return 1.0*self.correct / self.total
 
@@ -85,6 +90,49 @@ def load_images(image_files):
     return out
 
 
+def conv_pred(prompt, conv, tokenizer, model, use_image, IMAGE_TOKEN_INDEX, images_tensor=None):
+    input_ids = (
+        tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt")
+        .unsqueeze(0)
+        .cuda()
+    )
+    stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
+    keywords = [stop_str]
+    stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
+    if use_image:
+        output_ids = model.generate(
+            input_ids,
+            images=images_tensor,
+            do_sample=True if args.temperature > 0 else False,
+            temperature=args.temperature,
+            top_p=args.top_p,
+            num_beams=args.num_beams,
+            max_new_tokens=args.max_new_tokens,
+            use_cache=True,
+            stopping_criteria=[stopping_criteria],
+        )
+    else:
+        output_ids = model.generate(
+            input_ids,
+            do_sample=True if args.temperature > 0 else False,
+            temperature=args.temperature,
+            top_p=args.top_p,
+            num_beams=args.num_beams,
+            max_new_tokens=args.max_new_tokens,
+            use_cache=True,
+            stopping_criteria=[stopping_criteria],
+        )
+
+    # Decode output
+    input_token_len = input_ids.shape[1]
+    print("DEBUG input_token_len: ", input_token_len)
+
+    outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
+    outputs = outputs.strip()
+
+    return outputs
+
+
 def main(args):
     # Load Model
     disable_torch_init()
@@ -102,6 +150,7 @@ def main(args):
     total = 0
 
     global_acc = TypeAccuracy("Global")
+    qa0_acc = TypeAccuracy("Program Accuracy")
     qa1_acc = TypeAccuracy("Interact")
     qa2_acc = TypeAccuracy("Sequence")
     qa3_acc = TypeAccuracy("Predict")
@@ -115,9 +164,16 @@ def main(args):
         # Q-A Pair
         idx = line["id"]
         quest_type = line["quest_type"]
+
+        # Gen Program
         conversations = line["conversations"]
-        qs = conversations[0]["value"]
-        gt_answers   = conversations[1]["value"]
+        qs_0 = conversations[0]["value"]
+        gt_answers_0   = conversations[1]["value"]
+
+        # Gen Answer
+        qs_1 = conversations[2]["value"]
+        gt_answers_1   = conversations[3]["value"]
+
         index2ans = line["index2ans"]
         all_choices = line["all_choices"]
         
@@ -151,82 +207,60 @@ def main(args):
             else:
                 n_images=0
                     
-            #print("HEHREH ", qs)
+            total += 1
+            #Program
             img_placehoder = '<image>\n' * n_images
-            qs = qs.replace("<video>\n", img_placehoder)
-            conv = conv_templates[args.conv_mode].copy()
-            conv.append_message(conv.roles[0], qs)
-            conv.append_message(conv.roles[1], None)
-            prompt = conv.get_prompt()
+            qs_0 = qs_0.replace("<video>\n", img_placehoder)
+            conv_0 = conv_templates[args.conv_mode].copy()
+            conv_0.append_message(conv_0.roles[0], qs_0)
+            conv_0.append_message(conv_0.roles[1], None)
+            prompt_0 = conv_0.get_prompt()
+            
+            outputs_0 = conv_pred(prompt_0, conv_0, tokenizer, model, use_image, IMAGE_TOKEN_INDEX, images_tensor)    
+            answer_id_0 = outputs_0
+            qa0_acc.update_program(gt_answers_0, answer_id_0)
+            print("{}: {}".format(idx, qs_0))
+            print("Program Matched AI ? {}".format(gt_answers_0 == outputs_0))
 
-            input_ids = (
-                tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt")
-                .unsqueeze(0)
-                .cuda()
-            )
-            stop_str = conv.sep if conv.sep_style != SeparatorStyle.TWO else conv.sep2
-            keywords = [stop_str]
-            stopping_criteria = KeywordsStoppingCriteria(keywords, tokenizer, input_ids)
-            if use_image:
-                output_ids = model.generate(
-                    input_ids,
-                    images=images_tensor,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True,
-                    stopping_criteria=[stopping_criteria],
-                    pad_token_id=tokenizer.eos_token_id,
-                )
+            # Answer
+            conv_1 = conv_templates[args.conv_mode].copy()
+            conv_1.append_message(conv_1.roles[0], qs_0)
+            conv_1.append_message(conv_1.roles[1], answer_id_0)
+            conv_1.append_message(conv_1.roles[0], qs_1)
+            conv_1.append_message(conv_1.roles[1], None)
+            prompt_1 = conv_1.get_prompt()
+
+            outputs_1 = conv_pred(prompt_1, conv_1, tokenizer, model, use_image, IMAGE_TOKEN_INDEX, images_tensor)    
+            answer_id_1 = parse_choice(outputs_1, all_choices, index2ans)
+            global_acc.update(gt_answers_1, answer_id_1)
+            print("{}: {}\nProgram: {}\n{}".format(idx, qs_0, answer_id_0, qs_1))
+            print("GT: {}\nAI: {}".format(gt_answers_1, outputs_1))
+            #print("Global Accu{:.4f}.\nGT: {}\nAI: {}".format(correct*1.0/total, gt_answers, outputs))
+            if "Interaction" in quest_type:
+                qa1_acc.update(gt_answers_1, answer_id_1)
+            elif "Sequence" in quest_type:
+                qa2_acc.update(gt_answers_1, answer_id_1)
+            elif "Prediction" in quest_type:
+                qa3_acc.update(gt_answers_1, answer_id_1)
+            elif "Feasibility" in quest_type:
+                qa4_acc.update(gt_answers_1, answer_id_1)
             else:
-                output_ids = model.generate(
-                    input_ids,
-                    do_sample=True if args.temperature > 0 else False,
-                    temperature=args.temperature,
-                    top_p=args.top_p,
-                    num_beams=args.num_beams,
-                    max_new_tokens=args.max_new_tokens,
-                    use_cache=True,
-                    stopping_criteria=[stopping_criteria],
-                )
-
-        # Decode output
-        input_token_len = input_ids.shape[1]
-        print("DEBUG input_token_len: ", input_token_len)
-
-        outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
-
-        outputs = outputs.strip()
-        total += 1
-        answer_id = parse_choice(outputs, all_choices, index2ans)
-        global_acc.update(gt_answers, answer_id)
-        print("{}: {}".format(idx, qs))
-        #print("Global Accu{:.4f}.\nGT: {}\nAI: {}".format(correct*1.0/total, gt_answers, outputs))
-        print("GT: {}\nAI: {}".format(gt_answers, outputs))
-        if "Interaction" in quest_type:
-            qa1_acc.update(gt_answers, answer_id)
-        elif "Sequence" in quest_type:
-            qa2_acc.update(gt_answers, answer_id)
-        elif "Prediction" in quest_type:
-            qa3_acc.update(gt_answers, answer_id)
-        elif "Feasibility" in quest_type:
-            qa4_acc.update(gt_answers, answer_id)
-        else:
-            print(f"Unknown Type: {idx}")
-        # print each type accuracy
-        print("-----"*5)
-        qa1_acc.print_accuracy()
-        qa2_acc.print_accuracy()
-        qa3_acc.print_accuracy()
-        qa4_acc.print_accuracy()
-        print("-----"*5)
-        # average over type
-        avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() ) / 4.0
-        print("Average Acc over Type: {:.4f}".format(avg_acc))
+                print(f"Unknown Type: {idx}")
+            # print each type accuracy
+            print("-----"*5)
+            qa0_acc.print_accuracy()
+            print("-----"*5)
+            qa1_acc.print_accuracy()
+            qa2_acc.print_accuracy()
+            qa3_acc.print_accuracy()
+            qa4_acc.print_accuracy()
+            print("-----"*5)
+            # average over type
+            avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() ) / 4.0
+            print("Average Acc over Type: {:.4f}".format(avg_acc))
 
     print("Process Finished")
+
 
 def parse_answer(outputs):
     if "Answer is:" in outputs:
