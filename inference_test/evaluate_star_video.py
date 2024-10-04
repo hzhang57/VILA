@@ -176,6 +176,7 @@ def main(args):
                     max_new_tokens=args.max_new_tokens,
                     use_cache=True,
                     stopping_criteria=[stopping_criteria],
+                    pad_token_id=tokenizer.eos_token_id,
                 )
             else:
                 output_ids = model.generate(
