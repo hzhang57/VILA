@@ -219,16 +219,29 @@ def register_datasets_mixtures():
     )
     add_dataset(star_qa_Query_Video_Gen_Program_Middle)
 
+    # Query + Image -> Program + Middle (NoTab, V5.1)
+    # Query + Program + Middle + Video -> Answer
+    star_qa_Query_Video_Gen_Program_Middle_NoTab = Dataset(
+        dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTab",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots_video/STAR_val_NEAT_Query_Video_Gen_Program_Middle_NoTab_v5.1.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTab)
+
+
     # Query + Image -> Program + Middle (OptEarly, V5.2)
     # Query + Program + Middle + Video -> Answer
     star_qa_Query_Video_Gen_Program_Middle_OptEarly = Dataset(
         dataset_name="star_qa_Query_Video_Gen_Program_Middle_OptEarly",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video/STAR_test_NEAT_Query_Video_Gen_Program_Middle_OptEarly_v5.2.json",
+        data_path="./dataset/star/sft_annots_video/STAR_val_NEAT_Query_Video_Gen_Program_Middle_OptEarly_v5.2.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
     add_dataset(star_qa_Query_Video_Gen_Program_Middle_OptEarly)
+
 
 
 
