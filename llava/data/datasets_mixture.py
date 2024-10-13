@@ -247,7 +247,7 @@ def register_datasets_mixtures():
     star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarly = Dataset(
         dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarly",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video/STAR_test_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarly_v5.3.json",
+        data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarly_v5.3.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
