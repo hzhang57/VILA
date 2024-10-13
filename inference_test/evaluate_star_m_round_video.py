@@ -29,6 +29,39 @@ from pathlib import Path
 import re
 from llava.eval.mmmu_utils.eval_utils import parse_choice
 
+import difflib
+
+def print_gt_and_answers(a, b):
+    # Split the strings into lines
+    lines_a = a.split('\n')
+    lines_b = b.split('\n')
+    
+    # Get the maximum width for each column to align the output
+    max_len_a = max(len(line) for line in lines_a)
+    max_len_b = max(len(line) for line in lines_b)
+    
+    # Print header
+    print(f"{'----gt-program----'.ljust(max_len_a)}|{'----gen-program----'.ljust(max_len_b)}")
+    
+    # Iterate through both lists of lines and print them side by side
+    for line_a, line_b in zip(lines_a, lines_b):
+        # Print each line from a and b aligned
+        print(f"{line_a.ljust(max_len_a)}|{line_b.ljust(max_len_b)}")
+    
+    # Handle any remaining lines if a and b are of different lengths
+    if len(lines_a) > len(lines_b):
+        for line_a in lines_a[len(lines_b):]:
+            print(f"{line_a.ljust(max_len_a)}|{' ' * max_len_b}")
+    elif len(lines_b) > len(lines_a):
+        for line_b in lines_b[len(lines_a):]:
+            print(f"{' ' * max_len_a}|{line_b.ljust(max_len_b)}")
+    print('--'*40)
+
+def string_diff(string1, string2):
+    # Use difflib.ndiff to find differences
+    diff = difflib.ndiff(string1, string2)
+    return '\n'.join(diff)
+
 
 def parse_first_number(text):
     """
@@ -125,7 +158,7 @@ def conv_pred(prompt, conv, tokenizer, model, use_image, IMAGE_TOKEN_INDEX, imag
 
     # Decode output
     input_token_len = input_ids.shape[1]
-    print("DEBUG input_token_len: ", input_token_len)
+    #print("DEBUG input_token_len: ", input_token_len)
 
     outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
     outputs = outputs.strip()
@@ -219,9 +252,18 @@ def main(args):
             
             outputs_0 = conv_pred(prompt_0, conv_0, tokenizer, model, use_image, IMAGE_TOKEN_INDEX, images_tensor)    
             answer_id_0 = outputs_0
+            
+            # Remove last \n in gt_answers_0, 2024/10/13
+            gt_answers_0 = gt_answers_0.strip("\n")
+            answer_id_0  = answer_id_0.strip("\n")
+
             qa0_acc.update_program(gt_answers_0, answer_id_0)
             print("{}: {}".format(idx, qs_0))
-            print("Program Matched AI ? {}".format(gt_answers_0 == outputs_0))
+            print("[WARNING]: Program Matched AI ? {}".format(gt_answers_0 == outputs_0))
+            print_gt_and_answers(gt_answers_0, outputs_0)
+            #print("======Program GT  {}".format(gt_answers_0))
+            #print("======Program GEN {}".format(outputs_0))
+            #print("Program Matched Diff {} {}".format(len(gt_answers_0), len( outputs_0)))
 
             # Answer
             conv_1 = conv_templates[args.conv_mode].copy()
@@ -249,17 +291,17 @@ def main(args):
             else:
                 print(f"Unknown Type: {idx}")
             # print each type accuracy
-            print("-----"*5)
+            print("--"*40)
             qa0_acc.print_accuracy()
-            print("-----"*5)
+            print("--"*40)
             qa1_acc.print_accuracy()
             qa2_acc.print_accuracy()
             qa3_acc.print_accuracy()
             qa4_acc.print_accuracy()
-            print("-----"*5)
             # average over type
             avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() ) / 4.0
             print("Average Acc over Type: {:.4f}".format(avg_acc))
+            print("--"*40)
 
     print("Process Finished")
 
