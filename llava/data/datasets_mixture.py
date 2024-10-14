@@ -264,4 +264,14 @@ def register_datasets_mixtures():
     )
     add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFix)
 
+    # Query + Image -> Program + Middle (NoTabOptEarlyFixThreeFold, V5.5)
+    # Query + Program + Middle + Video -> Answer
+    star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold = Dataset(
+        dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold_v5.5.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold)
 
