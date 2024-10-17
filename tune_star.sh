@@ -27,6 +27,9 @@ OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Program_Video_vila3b_loss2_epoch1"
 DATA_SELECT="star_qa_Program_Video+star_qa_Query_Video"
 OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Program_Video+Query_Video_vila3b_loss2_epoch1"
 
+DATA_SELECT="star_qa_Query_Program_Video"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Program_Video_vila3b_loss2_epoch1"
+
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
     llava/train/train_mem.py \
