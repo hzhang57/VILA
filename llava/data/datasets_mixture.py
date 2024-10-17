@@ -73,77 +73,77 @@ def register_datasets_mixtures():
 
     # Add STAR-QA dataset by Hao Zhang
     # Program + Image -> Answer
-    star_qa_imgx4_Program_Image = Dataset(
-        dataset_name="star_qa_imgx4_Program_Image",
-        dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Image_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Program_Image)
+    #star_qa_imgx4_Program_Image = Dataset(
+    #    dataset_name="star_qa_imgx4_Program_Image",
+    #    dataset_type="star_qa",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Image_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Program_Image)
 
-    # Query + Image -> Program
-    # Query + Program + Image -> Answer
-    star_qa_imgx4_Query_Image_Gen_Program = Dataset(
-        dataset_name="star_qa_imgx4_Query_Image_Gen_Program",
-        dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_Gen_Program_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Query_Image_Gen_Program)
+    ## Query + Image -> Program
+    ## Query + Program + Image -> Answer
+    #star_qa_imgx4_Query_Image_Gen_Program = Dataset(
+    #    dataset_name="star_qa_imgx4_Query_Image_Gen_Program",
+    #    dataset_type="star_qa",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_Gen_Program_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Query_Image_Gen_Program)
 
-    # Query + Image -> Answer
-    star_qa_imgx4_Query_Image = Dataset(
-        dataset_name="star_qa_imgx4_Query_Image",
-        dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Query_Image)
+    ## Query + Image -> Answer
+    #star_qa_imgx4_Query_Image = Dataset(
+    #    dataset_name="star_qa_imgx4_Query_Image",
+    #    dataset_type="star_qa",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Image_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Query_Image)
 
-    # Query + Program + Graph + Image -> Answer
-    star_qa_imgx4_Query_Program_Graph_Image = Dataset(
-        dataset_name="star_qa_imgx4_Query_Program_Graph_Image",
-        dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Graph_Image_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Query_Program_Graph_Image)
+    ## Query + Program + Graph + Image -> Answer
+    #star_qa_imgx4_Query_Program_Graph_Image = Dataset(
+    #    dataset_name="star_qa_imgx4_Query_Program_Graph_Image",
+    #    dataset_type="star_qa",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Graph_Image_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Query_Program_Graph_Image)
 
-    # Query + Program + Image -> Answer
-    star_qa_imgx4_Query_Program_Image = Dataset(
-        dataset_name="star_qa_imgx4_Query_Program_Image",
-        dataset_type="star_qa",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Image_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Query_Program_Image)
-
-
-    # Program + Graph -> Answer
-    star_qa_imgx4_Program_Graph = Dataset(
-        dataset_name="star_qa_imgx4_Program_Graph",
-        dataset_type="torch",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Graph_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Program_Graph)
+    ## Query + Program + Image -> Answer
+    #star_qa_imgx4_Query_Program_Image = Dataset(
+    #    dataset_name="star_qa_imgx4_Query_Program_Image",
+    #    dataset_type="star_qa",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Program_Image_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Query_Program_Image)
 
 
-    # Query + Graph -> Answer
-    star_qa_imgx4_Query_Graph = Dataset(
-        dataset_name="star_qa_imgx4_Query_Graph",
-        dataset_type="torch",
-        data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Graph_v3.0.json",
-        image_path="./dataset/star/charadesv1_480/frames/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(star_qa_imgx4_Query_Graph)
+    ## Program + Graph -> Answer
+    #star_qa_imgx4_Program_Graph = Dataset(
+    #    dataset_name="star_qa_imgx4_Program_Graph",
+    #    dataset_type="torch",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Program_Graph_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Program_Graph)
+
+
+    ## Query + Graph -> Answer
+    #star_qa_imgx4_Query_Graph = Dataset(
+    #    dataset_name="star_qa_imgx4_Query_Graph",
+    #    dataset_type="torch",
+    #    data_path="./dataset/star/sft_annots/STAR_train_NEAT_imgx4_Query_Graph_v3.0.json",
+    #    image_path="./dataset/star/charadesv1_480/frames/",
+    #    description="Original data source: https://bobbywu.com/STAR/",
+    #)
+    #add_dataset(star_qa_imgx4_Query_Graph)
 
 
     ## Directly use video
@@ -151,7 +151,7 @@ def register_datasets_mixtures():
     star_qa_Query_Video = Dataset(
         dataset_name="star_qa_Query_Video",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video_v2/STAR_train_NEAT_Query_Video_v3.0.json",
+        data_path="./dataset/star/sft_annots_video_v3/STAR_train_NEAT_Query_Video_v3.0.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
@@ -162,7 +162,7 @@ def register_datasets_mixtures():
     star_qa_Program_Video = Dataset(
         dataset_name="star_qa_Program_Video",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video_v2/STAR_train_NEAT_Program_Video_v3.0.json",
+        data_path="./dataset/star/sft_annots_video_v3/STAR_train_NEAT_Program_Video_v3.0.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
@@ -173,7 +173,7 @@ def register_datasets_mixtures():
     star_qa_Query_Program_Video = Dataset(
         dataset_name="star_qa_Query_Program_Video",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video_v2/STAR_train_NEAT_Query_Program_Video_v3.0.json",
+        data_path="./dataset/star/sft_annots_video_v3/STAR_train_NEAT_Query_Program_Video_v3.0.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
@@ -184,127 +184,17 @@ def register_datasets_mixtures():
     star_qa_Query_Gen_Program_Video = Dataset(
         dataset_name="star_qa_Query_Gen_Program_Video",
         dataset_type="star_qa_decord",
-        data_path="./dataset/star/sft_annots_video_v2/STAR_train_NEAT_Query_Gen_Program_Video_v3.0.json",
+        data_path="./dataset/star/sft_annots_video_v3/STAR_train_NEAT_Query_Gen_Program_Video_v3.0.json",
         image_path="./dataset/star/charadesv1_480/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
     add_dataset(star_qa_Query_Gen_Program_Video)
 
-    ## Query + Program + video -> Answer
-    #star_qa_Query_Program_Video = Dataset(
-    #    dataset_name="star_qa_Query_Program_Video",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Program_Video_v3.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Program_Video)
-
-    ## Query + Program + Graph + Video -> Answer
-    #star_qa_imgx4_Query_Program_Graph_Video = Dataset(
-    #    dataset_name="star_qa_imgx4_Query_Program_Graph_Video",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_imgx4_Query_Program_Graph_Video_v3.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_imgx4_Query_Program_Graph_Video)
-
-    ## Program + Video -> Answer
-    #star_qa_Program_Video = Dataset(
-    #    dataset_name="star_qa_Program_Video",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Program_Video_v3.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Program_Video)
-
-    ## Query + Image -> Program
-    ## Query + Program + Video -> Answer
-    #star_qa_Query_Video_Gen_Program = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_v3.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program)
-
-    ## Program + Video + Middle Result -> Answer
-    #star_qa_Program_Video_Middle = Dataset(
-    #    dataset_name="star_qa_Program_Video_Middle",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Program_Video_Middle_v5.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Program_Video_Middle)
-
-    ## Query + Image -> Program + Middle
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_v5.0.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle)
-
-    ## Query + Image -> Program + Middle (NoTab, V5.1)
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle_NoTab = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTab",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTab_v5.1.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTab)
-
-
-    ## Query + Image -> Program + Middle (OptEarly, V5.2)
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle_OptEarly = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle_OptEarly",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_OptEarly_v5.2.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle_OptEarly)
-
-    ## Query + Image -> Program + Middle (NoTabOptEarly, V5.3)
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarly = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarly",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarly_v5.3.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarly)
-
-    ## Query + Image -> Program + Middle (NoTabOptEarly, V5.4)
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFix = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFix",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarlyFix_v5.4.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFix)
-
-    ## Query + Image -> Program + Middle (NoTabOptEarlyFixThreeFold, V5.5)
-    ## Query + Program + Middle + Video -> Answer
-    #star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold = Dataset(
-    #    dataset_name="star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold",
-    #    dataset_type="star_qa_decord",
-    #    data_path="./dataset/star/sft_annots_video/STAR_train_NEAT_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold_v5.5.json",
-    #    image_path="./dataset/star/charadesv1_480/video/",
-    #    description="Original data source: https://bobbywu.com/STAR/",
-    #)
-    #add_dataset(star_qa_Query_Video_Gen_Program_Middle_NoTabOptEarlyFixThreeFold)
-
+    star_qa_Query_Gen_Program_Middle_Video = Dataset(
+        dataset_name="star_qa_Query_Gen_Program_Middle_Video",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots_video_v3/STAR_train_NEAT_Query_Gen_Program_Middle_Video_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Gen_Program_Middle_Video)
