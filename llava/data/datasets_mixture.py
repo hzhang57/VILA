@@ -179,6 +179,17 @@ def register_datasets_mixtures():
     )
     add_dataset(star_qa_Query_Program_Video)
 
+    ## Directly use video
+    # Program + Video -> Answer
+    star_qa_Query_Gen_Program_Video = Dataset(
+        dataset_name="star_qa_Query_Gen_Program_Video",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots_video_v2/STAR_train_NEAT_Query_Gen_Program_Video_v3.0.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Gen_Program_Video)
+
     ## Query + Program + video -> Answer
     #star_qa_Query_Program_Video = Dataset(
     #    dataset_name="star_qa_Query_Program_Video",
