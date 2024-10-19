@@ -202,7 +202,7 @@ def main(args):
         total += 1
         answer_id = parse_choice(outputs, all_choices, index2ans)
         global_acc.update(gt_answers, answer_id)
-        print("{}: {}".format(idx, qs))
+        print("{}:\n{}".format(idx, qs))
         #print("Global Accu{:.4f}.\nGT: {}\nAI: {}".format(correct*1.0/total, gt_answers, outputs))
         print("GT: {}\nAI: {}".format(gt_answers, outputs))
         if "Interaction" in quest_type:
