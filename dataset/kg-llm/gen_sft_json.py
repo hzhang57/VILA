@@ -87,10 +87,10 @@ def load_json(one_file, miss_vid_file):
             opts = ""
             for ii, one_opt in enumerate(options):
                 one_opt = add_spaces_to_camel_case(one_opt)
-                opts += ("({}) {}; ".format(ii, one_opt))
+                opts += ("({}) {}\n ".format(ii, one_opt))
                 index2ans[str(ii)] = one_opt
-            opts = opts.rstrip("; ")
-            question = "<video>\n{} select from options: {}.".format(question, opts)
+            #opts = opts.rstrip("; ")
+            question = "<video>\n{} select from options:\n{}Return only the index of the correct answer (e.g. 1, 2, 3, 4, or 5).".format(question, opts)
 
             one_sample["conversations"] = [
                 {
