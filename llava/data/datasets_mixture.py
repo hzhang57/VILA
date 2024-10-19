@@ -145,6 +145,16 @@ def register_datasets_mixtures():
     #)
     #add_dataset(star_qa_imgx4_Query_Graph)
 
+    ## Directly use video
+    # Query + Video -> Answer
+    kg_qa_Query_Video = Dataset(
+        dataset_name="kg_qa_Query_Video",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/kg-llm/rephrased_QA_15Oct24/training_SFT.json",
+        image_path="./dataset/kg-llm/COIN/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(kg_qa_Query_Video)
 
     ## Directly use video
     # Query + Video -> Answer
