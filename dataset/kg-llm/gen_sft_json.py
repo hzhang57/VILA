@@ -90,7 +90,7 @@ def load_json(one_file, miss_vid_file):
                 opts += ("({}) {}\n".format(ii, one_opt))
                 index2ans[str(ii)] = one_opt
             #opts = opts.rstrip("; ")
-            question = "<video>\n{} select from options:\n{}Return only the index of the correct answer (e.g. 1, 2, 3, 4, or 5).".format(question, opts)
+            question = "<video>\n{} select from options:\n{}Return only the index of the correct answer (e.g. 0, 1, 2, 3, or 4).".format(question, opts)
 
             one_sample["conversations"] = [
                 {
