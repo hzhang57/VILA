@@ -19,7 +19,7 @@ MODEL_BASE=Efficient-Large-Model/VILA1.5-3B
 # Final output checkpoint path
 
 DATA_SELECT="star_qa_Query_Video"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Video_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Video_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -64,7 +64,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     
 
 DATA_SELECT="star_qa_Program_Video"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Program_Video_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Program_Video_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -109,7 +109,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
 
 
 DATA_SELECT="star_qa_Query_Program_Video"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Program_Video_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Program_Video_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -153,7 +153,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --report_to wandb
 
 DATA_SELECT="star_qa_Query_Gen_Program_Video"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Gen_Program_Video_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Gen_Program_Video_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -197,7 +197,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --report_to wandb
 
 DATA_SELECT="star_qa_Query_Gen_Program_Middle_Video_3Stage"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Gen_Program_Middle_Video_3Stage_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_Query_Gen_Program_Middle_Video_3Stage_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -242,7 +242,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
 
 
 DATA_SELECT="star_qa_Query_Gen_Program_Middle_Video_3Stage+star_qa_Query_Video+star_qa_Program_Video+star_qa_Query_Program_Video+star_qa_Query_Gen_Program_Video"
-OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_QVGenP+QV+PV+QPV+3Stage_vila3b_loss2_e1_3.1"
+OUTPUT="./ckpts_vid/star_qa_imgx{$NUM_FRAMES}_QVGenP+QV+PV+QPV+3Stage_vila3b_loss2_e1_3.2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
