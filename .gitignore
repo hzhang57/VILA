@@ -1,3 +1,7 @@
 dataset_kg
 *__pycache__
 vila.egg-info
+dataset/kg-llm/COIN
+dataset/kg-llm/rephrased_QA_15Oct24_v2
+dataset/kg-llm/rephrased_QA_15Oct24
+dataset/star/charadesv1_480
