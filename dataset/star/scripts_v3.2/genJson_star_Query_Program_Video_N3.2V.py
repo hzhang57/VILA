@@ -231,7 +231,7 @@ def format_into_instruct(sample, image_used, qid_to_frames,
     #from_human = "<video>\n" + "STAR Task: {} ".format(question)  + program_structured + " Select from options: " + options
     #from_human_0 = "<video>\n" + "STAR Task:\n{}\nSelect from options: {}".format(program_structured, options)
     #from_human_0 = "<video>\n" + "{}\n{}\nSelect from options:\n{}Answer: ".format(question, program_structured, options)
-    from_human_0 = "<video>\n" + "{}\n{}\nSelect from options:\n{}Answer: ".format(program_structured, question, options)
+    from_human_0 = "<video>\n" + "{}\n{}\nSelect from options:\n{}Answer: ".format(question, program_structured, options)
     #from_human_0 = from_human_0.strip(";") + "."
     from_gpt_0   = "{} {}".format(answer_id, answer.replace('/', ', '))
     conversation = [
