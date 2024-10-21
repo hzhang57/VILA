@@ -341,7 +341,7 @@ def format_into_instruct(sample, image_used, qid_to_frames,
     from_human_0 = "<video>\n" + "{}\nProgram:\n".format(question)
     from_gpt_0 = program_structured
     from_human_1 = "\nSelect from options:\n" + options
-    from_human_1 = from_human_1.strip(";") + "."
+    #from_human_1 = from_human_1.strip(";") + "."
     from_gpt_1   = "{} {}".format(answer_id, answer.replace('/', ', '))
     conversation = [
         {
