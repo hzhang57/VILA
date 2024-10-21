@@ -200,14 +200,14 @@ def register_datasets_mixtures():
     )
     add_dataset(star_qa_Query_Gen_Program_Video)
 
-    ###star_qa_Query_Gen_Program_Middle_Video = Dataset(
-    ###    dataset_name="star_qa_Query_Gen_Program_Middle_Video",
-    ###    dataset_type="star_qa_decord",
-    ###    data_path="./dataset/star/sft_annots_video_v3.1/STAR_train_NEAT_Query_Gen_Program_Middle_Video_v3.1.json",
-    ###    image_path="./dataset/star/charadesv1_480/video/",
-    ###    description="Original data source: https://bobbywu.com/STAR/",
-    ###)
-    ###add_dataset(star_qa_Query_Gen_Program_Middle_Video)
+    star_qa_Query_Gen_Program_Middle_Video = Dataset(
+        dataset_name="star_qa_Query_Gen_Program_Middle_Video",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/star/sft_annots_video_v3.1/STAR_train_NEAT_Query_Gen_Program_Middle_Video_v3.1.json",
+        image_path="./dataset/star/charadesv1_480/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(star_qa_Query_Gen_Program_Middle_Video)
 
     star_qa_Query_Gen_Program_Middle_Video_3Stage = Dataset(
         dataset_name="star_qa_Query_Gen_Program_Middle_Video_3Stage",
