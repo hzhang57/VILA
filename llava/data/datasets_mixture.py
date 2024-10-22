@@ -150,7 +150,7 @@ def register_datasets_mixtures():
     kg_qa_Query_Video = Dataset(
         dataset_name="kg_qa_Query_Video",
         dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_15Oct24_v2/training_SFT.json",
+        data_path="./dataset/kg-llm/rephrased_QA_15Oct24_v2.2/training_SFT.json",
         image_path="./dataset/kg-llm/COIN/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
