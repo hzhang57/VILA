@@ -5,3 +5,4 @@ dataset/kg-llm/COIN
 dataset/kg-llm/rephrased_QA_15Oct24_v2
 dataset/kg-llm/rephrased_QA_15Oct24
 dataset/star/charadesv1_480
+dataset/star/sft_annots_video_v3.3/STAR_train_NEAT_Query_Gen_Program_4round_Video_v3.3.json
