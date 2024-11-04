@@ -74,11 +74,11 @@ def load_json(one_file, miss_vid_file):
 
             question = one_line['question']
             options  = one_line['options']
-            answer   = one_line['answer']
+            answer   = one_line['answer_idx']
             step_id  = one_line['step']['id']
             start_secs = one_line['step']['segment'][0]
             end_secs   = one_line['step']['segment'][1]
-            question_type = one_line['quest_type']
+            question_type = one_line['question_type']
 
             one_sample["id"] = "{}_{}".format(video_id, step_id)
             one_sample["video"] = find_video_path_by_id(video_id, "./COIN/videos/")
