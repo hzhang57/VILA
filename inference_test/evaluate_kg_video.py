@@ -101,6 +101,12 @@ def main(args):
     #model.config.tokenizer_model_max_length = args.tokenizer_model_max_length
 
 
+    ## Save outputs to list
+    model_info = Path(args.model_path).name
+    data_info  = Path(args.question_file).name.replace(".json", "")
+    output_file = model_info + "_" + data_info + "_Results.json"
+    output_dict = {}
+
     #features of 16xNxDim
     #features = torch.ones(128, 3000, 4096).cuda()
 
@@ -130,6 +136,15 @@ def main(args):
     qa9_acc = TypeAccuracy("qa9_")
     qa10_acc = TypeAccuracy("qa10_")
     qa11_acc = TypeAccuracy("qa11_")
+    qa12_acc = TypeAccuracy("qa12_")
+    qa13_acc = TypeAccuracy("qa13_")
+    qa14_acc = TypeAccuracy("qa14_")
+    qa15_acc = TypeAccuracy("qa15_")
+    qa16_acc = TypeAccuracy("qa16_")
+    qa17_acc = TypeAccuracy("qa17_")
+    qa18_acc = TypeAccuracy("qa18_")
+    qa19_acc = TypeAccuracy("qa19_")
+    #qa20_acc = TypeAccuracy("qa20_")
 
     ii = 0
     for line in tqdm(annotations, total=len(annotations)):
@@ -143,8 +158,8 @@ def main(args):
         qs = conversations[0]["value"]
         gt_answers   = conversations[1]["value"]
         index2ans = line["index2ans"]
-        all_choices = line["all_choices"]
-        
+        #all_choices = line["all_choices"]
+        all_choices = [x for x in index2ans.keys()]
         with torch.inference_mode():
             if args.num_video_frames > 0:
                 # Load Image
@@ -223,6 +238,14 @@ def main(args):
 
         outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
 
+        output_dict[idx] = {
+            "pred_answer": outputs,
+            "gt_answer": gt_answers,
+            "quest_type": quest_type,
+            "index2ans": index2ans
+        }
+
+
         outputs = outputs.strip()
         total += 1
         #answer_id = parse_answer(outputs)
@@ -233,6 +256,7 @@ def main(args):
         print("{}: {}".format(idx, qs))
         #print("Global Accu{:.4f}.\nGT: {}\nAI: {}".format(correct*1.0/total, gt_answers, outputs))
         print("GT: {}\nAI: {}".format(gt_answers, outputs))
+        #global_acc.update(gt_answers, answer_id)
         if "qa1_" in quest_type:
             qa1_acc.update(gt_answers, answer_id)
         elif "qa2_" in quest_type:
@@ -255,9 +279,27 @@ def main(args):
             qa10_acc.update(gt_answers, answer_id)
         elif "qa11_" in quest_type:
             qa11_acc.update(gt_answers, answer_id)
+        elif "qa12_" in quest_type:
+            qa12_acc.update(gt_answers, answer_id)
+        elif "qa13_" in quest_type:
+            qa13_acc.update(gt_answers, answer_id)
+        elif "qa14_" in quest_type:
+            qa14_acc.update(gt_answers, answer_id)
+        elif "qa15_" in quest_type:
+            qa15_acc.update(gt_answers, answer_id)
+        elif "qa16_" in quest_type:
+            qa16_acc.update(gt_answers, answer_id)
+        elif "qa17_" in quest_type:
+            qa17_acc.update(gt_answers, answer_id)
+        elif "qa18_" in quest_type:
+            qa18_acc.update(gt_answers, answer_id)
+        elif "qa19_" in quest_type:
+            qa19_acc.update(gt_answers, answer_id)
         else:
             print(f"Unknown Type: {idx}")
         # print each type accuracy
+        print("-----"*5)
+        global_acc.print_accuracy()
         print("-----"*5)
         qa1_acc.print_accuracy()
         qa2_acc.print_accuracy()
@@ -270,9 +312,17 @@ def main(args):
         qa9_acc.print_accuracy()
         qa10_acc.print_accuracy()
         qa11_acc.print_accuracy()
+        qa12_acc.print_accuracy()
+        qa13_acc.print_accuracy()
+        qa14_acc.print_accuracy()
+        qa15_acc.print_accuracy()
+        qa16_acc.print_accuracy()
+        qa17_acc.print_accuracy()
+        qa18_acc.print_accuracy()
+        qa19_acc.print_accuracy()
         print("-----"*5)
         # average over type
-        avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() + qa5_acc.get_accuracy() + qa6_acc.get_accuracy() + qa7_acc.get_accuracy() + qa8_acc.get_accuracy() + qa9_acc.get_accuracy() + qa10_acc.get_accuracy() + qa11_acc.get_accuracy()) / 11.0
+        avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() + qa5_acc.get_accuracy() + qa6_acc.get_accuracy() + qa7_acc.get_accuracy() + qa8_acc.get_accuracy() + qa9_acc.get_accuracy() + qa10_acc.get_accuracy() + qa11_acc.get_accuracy() + qa12_acc.get_accuracy() + qa13_acc.get_accuracy() + qa14_acc.get_accuracy() + qa15_acc.get_accuracy() +qa16_acc.get_accuracy() + qa17_acc.get_accuracy() + qa18_acc.get_accuracy() + qa19_acc.get_accuracy()) / 19.0
         print("Average Acc over Type: {:.4f}".format(avg_acc))
 
 
@@ -298,9 +348,9 @@ def main(args):
    #     "Feasibility": feasibility_results
    #         }
 
-   # print("save to {}".format(args.answers_file))
-   # with open(args.answers_file, "w") as f:
-   #     json.dump(final_out, f, indent=2)
+    print("save to {}".format(output_file))
+    with open(output_file, "w") as f:
+        json.dump(output_dict, f, indent=2)
 
 
     print("Process Finished")
