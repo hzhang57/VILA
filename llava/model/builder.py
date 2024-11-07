@@ -62,6 +62,8 @@ def load_pretrained_model(
             warnings.warn(
                 "There is `lora` in model name but no `model_base` is provided. If you are loading a LoRA model, please provide the `model_base` argument. Detailed instruction: https://github.com/haotian-liu/LLaVA#launch-a-model-worker-lora-weights-unmerged."
             )
+        print("lora" in model_name.lower())
+        print(model_name.lower())
         if ("lora" in model_name.lower() or "dora" in model_name.lower()) and model_base is not None:
             lora_cfg_pretrained = AutoConfig.from_pretrained(model_path)
             print(lora_cfg_pretrained)

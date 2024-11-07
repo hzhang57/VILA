@@ -12,20 +12,23 @@ echo "JobID: $SLURM_JOB_ID | Full list: $worker_list"
 n_nodes=1
 nproc=1
 
-bs=16
-accu_steps=8
+bs=8
+accu_steps=32
 NUM_FRAMES=4
 MODEL_BASE=Efficient-Large-Model/VILA1.5-3B
 # Final output checkpoint path
 
-DATA_SELECT="kg_qa_Query_Video_100_shot"
-OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_100_shot_vila3b_loss2_epoch1"
+DATA_SELECT="kg_qa_Query_Video_5_shot"
+OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_5_shot_vila3b_loss2_epoch10_lora"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
     llava/train/train_mem.py \
-    --deepspeed ./scripts/zero3.json \
+    --deepspeed ./scripts/zero2.json \
     --model_name_or_path $MODEL_BASE \
+    --lora_enable True \
+    --lora_llm True \
+    --lora_vt True \
     --model_max_length 4096 \
     --version v1 \
     --num_video_frames $NUM_FRAMES \
@@ -33,16 +36,13 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --vision_tower google/siglip-so400m-patch14-384 \
     --mm_vision_select_feature cls_patch \
     --mm_projector mlp_downsample \
-    --tune_vision_tower True \
-    --tune_mm_projector True \
-    --tune_language_model True \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --image_aspect_ratio resize \
     --bf16 True \
     --output_dir $OUTPUT \
-    --num_train_epochs 1 \
+    --num_train_epochs 10 \
     --per_device_train_batch_size $bs \
     --per_device_eval_batch_size $bs \
     --gradient_accumulation_steps $accu_steps \
@@ -50,7 +50,7 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --save_strategy "steps" \
     --save_steps 10000 \
     --save_total_limit 1 \
-    --learning_rate 1e-5 \
+    --learning_rate 1e-4 \
     --weight_decay 0. \
     --warmup_ratio 0.00 \
     --lr_scheduler_type "cosine" \
@@ -63,3 +63,6 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --report_to wandb
     
 
+#    --tune_vision_tower True \
+#    --tune_mm_projector True \
+#    --tune_language_model True \
