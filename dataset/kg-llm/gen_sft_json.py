@@ -79,6 +79,9 @@ def load_json(one_file, miss_vid_file):
             start_secs = one_line['step']['segment'][0]
             end_secs   = one_line['step']['segment'][1]
             question_type = one_line['question_type']
+            task_label = one_line["task_label"]
+            step_label = one_line['step']["label"]
+
 
             #one_sample["id"] = "{}_{}".format(video_id, step_id)
             one_sample["id"] = one_line['qid']
@@ -88,10 +91,10 @@ def load_json(one_file, miss_vid_file):
             opts = ""
             for ii, one_opt in enumerate(options):
                 one_opt = add_spaces_to_camel_case(one_opt)
-                opts += ("({}) {}\n".format(ii, one_opt))
-                index2ans[str(ii)] = one_opt
+                opts += ("({}) {}\n".format(ii+1, one_opt))
+                index2ans[str(ii+1)] = one_opt
             #opts = opts.rstrip("; ")
-            question = "<video>\n{} select from options:\n{}Return only the index of the correct answer (e.g. 0, 1, 2, 3, or 4).".format(question, opts)
+            question = "<video>\n{} select from options:\n{}Return only the index of the correct answer (e.g. 1, 2, 3, 4, or 5).".format(question, opts)
 
             one_sample["conversations"] = [
                 {
@@ -100,13 +103,15 @@ def load_json(one_file, miss_vid_file):
                 },
                 {
                 "from":"gpt",
-                "value": "({}) {}".format(answer, add_spaces_to_camel_case(options[answer]))
+                "value": "{} {}".format(answer+1, add_spaces_to_camel_case(options[answer]))
                 }
             ]
             one_sample["quest_type"] = question_type
             one_sample["start_secs"] = start_secs
             one_sample["end_secs"]   = end_secs
             one_sample["index2ans"]   = index2ans
+            one_sample["task_label"]  = task_label
+            one_sample["step_label"]  = step_label
             sft_annots.append(one_sample)
 
     return sft_annots
