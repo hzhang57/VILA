@@ -128,8 +128,8 @@ def main(args):
     qa1_acc = TypeAccuracy("qa1_")
     qa2_acc = TypeAccuracy("qa2_")
     qa3_acc = TypeAccuracy("qa3_")
-    qa4_acc = TypeAccuracy("qa4_")
-    qa5_acc = TypeAccuracy("qa5_")
+    #qa4_acc = TypeAccuracy("qa4_")
+    #qa5_acc = TypeAccuracy("qa5_")
     qa6_acc = TypeAccuracy("qa6_")
     qa7_acc = TypeAccuracy("qa7_")
     qa8_acc = TypeAccuracy("qa8_")
@@ -159,6 +159,8 @@ def main(args):
         gt_answers   = conversations[1]["value"]
         index2ans = line["index2ans"]
         #all_choices = line["all_choices"]
+        task_label = line["task_label"]
+        step_label = line["step_label"]
         all_choices = [x for x in index2ans.keys()]
         with torch.inference_mode():
             if args.num_video_frames > 0:
@@ -238,12 +240,6 @@ def main(args):
 
         outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0]
 
-        output_dict[idx] = {
-            "pred_answer": outputs,
-            "gt_answer": gt_answers,
-            "quest_type": quest_type,
-            "index2ans": index2ans
-        }
 
 
         outputs = outputs.strip()
@@ -254,6 +250,18 @@ def main(args):
         answer_id = parse_choice(outputs, all_choices, index2ans)
         global_acc.update(gt_answers, answer_id)
         print("{}: {}".format(idx, qs))
+
+        output_dict[idx] = {
+                "qid": idx,
+                "quest_type": quest_type,
+                "qs":qs,
+                "gt": gt_answers.replace(")", "").replace("(", ""),
+                "task_label": task_label,
+                "step_label": step_label,
+                "response": outputs,
+                "parser": "{}".format(answer_id),
+                "index2ans": index2ans
+        }
         #print("Global Accu{:.4f}.\nGT: {}\nAI: {}".format(correct*1.0/total, gt_answers, outputs))
         print("GT: {}\nAI: {}".format(gt_answers, outputs))
         #global_acc.update(gt_answers, answer_id)
@@ -263,10 +271,10 @@ def main(args):
             qa2_acc.update(gt_answers, answer_id)
         elif "qa3_" in quest_type:
             qa3_acc.update(gt_answers, answer_id)
-        elif "qa4_" in quest_type:
-            qa4_acc.update(gt_answers, answer_id)
-        elif "qa5_" in quest_type:
-            qa5_acc.update(gt_answers, answer_id)
+        #elif "qa4_" in quest_type:
+        #    qa4_acc.update(gt_answers, answer_id)
+        #elif "qa5_" in quest_type:
+        #    qa5_acc.update(gt_answers, answer_id)
         elif "qa6_" in quest_type:
             qa6_acc.update(gt_answers, answer_id)
         elif "qa7_" in quest_type:
@@ -304,8 +312,8 @@ def main(args):
         qa1_acc.print_accuracy()
         qa2_acc.print_accuracy()
         qa3_acc.print_accuracy()
-        qa4_acc.print_accuracy()
-        qa5_acc.print_accuracy()
+        #qa4_acc.print_accuracy()
+        #qa5_acc.print_accuracy()
         qa6_acc.print_accuracy()
         qa7_acc.print_accuracy()
         qa8_acc.print_accuracy()
@@ -322,7 +330,7 @@ def main(args):
         qa19_acc.print_accuracy()
         print("-----"*5)
         # average over type
-        avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa4_acc.get_accuracy() + qa5_acc.get_accuracy() + qa6_acc.get_accuracy() + qa7_acc.get_accuracy() + qa8_acc.get_accuracy() + qa9_acc.get_accuracy() + qa10_acc.get_accuracy() + qa11_acc.get_accuracy() + qa12_acc.get_accuracy() + qa13_acc.get_accuracy() + qa14_acc.get_accuracy() + qa15_acc.get_accuracy() +qa16_acc.get_accuracy() + qa17_acc.get_accuracy() + qa18_acc.get_accuracy() + qa19_acc.get_accuracy()) / 19.0
+        avg_acc = (qa1_acc.get_accuracy() + qa2_acc.get_accuracy() + qa3_acc.get_accuracy() + qa6_acc.get_accuracy() + qa7_acc.get_accuracy() + qa8_acc.get_accuracy() + qa9_acc.get_accuracy() + qa10_acc.get_accuracy() + qa11_acc.get_accuracy() + qa12_acc.get_accuracy() + qa13_acc.get_accuracy() + qa14_acc.get_accuracy() + qa15_acc.get_accuracy() +qa16_acc.get_accuracy() + qa17_acc.get_accuracy() + qa18_acc.get_accuracy() + qa19_acc.get_accuracy()) / 17.0
         print("Average Acc over Type: {:.4f}".format(avg_acc))
 
 
