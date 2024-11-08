@@ -150,16 +150,25 @@ def register_datasets_mixtures():
     kg_qa_Query_Video_1_shot = Dataset(
         dataset_name="kg_qa_Query_Video_1_shot",
         dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.2_FewShot/training_fewshot_1_SFT.json",
+        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.3/train_fewshot_1_SFT.json",
         image_path="./dataset/kg-llm/COIN/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
     add_dataset(kg_qa_Query_Video_1_shot)
 
+    kg_qa_Query_Video_3_shot = Dataset(
+        dataset_name="kg_qa_Query_Video_3_shot",
+        dataset_type="star_qa_decord",
+        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.3/train_fewshot_3_SFT.json",
+        image_path="./dataset/kg-llm/COIN/video/",
+        description="Original data source: https://bobbywu.com/STAR/",
+    )
+    add_dataset(kg_qa_Query_Video_3_shot)
+    
     kg_qa_Query_Video_5_shot = Dataset(
         dataset_name="kg_qa_Query_Video_5_shot",
         dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.2_FewShot/training_fewshot_5_SFT.json",
+        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.3/train_fewshot_5_SFT.json",
         image_path="./dataset/kg-llm/COIN/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
@@ -168,29 +177,12 @@ def register_datasets_mixtures():
     kg_qa_Query_Video_10_shot = Dataset(
         dataset_name="kg_qa_Query_Video_10_shot",
         dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.2_FewShot/training_fewshot_10_SFT.json",
+        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.3/train_fewshot_10_SFT.json",
         image_path="./dataset/kg-llm/COIN/video/",
         description="Original data source: https://bobbywu.com/STAR/",
     )
     add_dataset(kg_qa_Query_Video_10_shot)
 
-    kg_qa_Query_Video_50_shot = Dataset(
-        dataset_name="kg_qa_Query_Video_50_shot",
-        dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.2_FewShot/training_fewshot_50_SFT.json",
-        image_path="./dataset/kg-llm/COIN/video/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(kg_qa_Query_Video_50_shot)
-
-    kg_qa_Query_Video_100_shot = Dataset(
-        dataset_name="kg_qa_Query_Video_100_shot",
-        dataset_type="star_qa_decord",
-        data_path="./dataset/kg-llm/rephrased_QA_25Oct24_v2.2_FewShot/training_fewshot_100_SFT.json",
-        image_path="./dataset/kg-llm/COIN/video/",
-        description="Original data source: https://bobbywu.com/STAR/",
-    )
-    add_dataset(kg_qa_Query_Video_100_shot)
 
     # Query + Video -> Answer
     kg_qa_Query_Video = Dataset(

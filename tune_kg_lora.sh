@@ -1,5 +1,5 @@
 #!/bin/bash
-export CUDA_VISIBLE_DEVICES=3,4
+export CUDA_VISIBLE_DEVICES=4
 master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_ADDR=${master_addr:-"127.0.0.1"}
 export CURRENT_RANK=${SLURM_PROCID:-"0"}
@@ -12,14 +12,15 @@ echo "JobID: $SLURM_JOB_ID | Full list: $worker_list"
 n_nodes=1
 nproc=1
 
-bs=8
+bs=6
 accu_steps=32
 NUM_FRAMES=4
 MODEL_BASE=Efficient-Large-Model/VILA1.5-3B
 # Final output checkpoint path
 
-DATA_SELECT="kg_qa_Query_Video_5_shot"
-OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_5_shot_vila3b_loss2_epoch10_lora"
+
+DATA_SELECT="kg_qa_Query_Video_3_shot"
+OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_3_shot_vila3b_loss2_epoch100_lora_v2"
 
 torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
@@ -42,7 +43,96 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --image_aspect_ratio resize \
     --bf16 True \
     --output_dir $OUTPUT \
-    --num_train_epochs 10 \
+    --num_train_epochs 100 \
+    --per_device_train_batch_size $bs \
+    --per_device_eval_batch_size $bs \
+    --gradient_accumulation_steps $accu_steps \
+    --evaluation_strategy "no" \
+    --save_strategy "steps" \
+    --save_steps 10000 \
+    --save_total_limit 1 \
+    --learning_rate 1e-4 \
+    --weight_decay 0. \
+    --warmup_ratio 0.00 \
+    --lr_scheduler_type "cosine" \
+    --logging_steps 1 \
+    --tf32 True \
+    --gradient_checkpointing True \
+    --dataloader_num_workers 16 \
+    --lazy_preprocess True \
+    --vflan_no_system_prompt True \
+    --report_to wandb
+
+
+DATA_SELECT="kg_qa_Query_Video_1_shot"
+OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_1_shot_vila3b_loss2_epoch100_lora_v2"
+
+torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
+    --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
+    llava/train/train_mem.py \
+    --deepspeed ./scripts/zero2.json \
+    --model_name_or_path $MODEL_BASE \
+    --lora_enable True \
+    --lora_llm True \
+    --lora_vt True \
+    --model_max_length 4096 \
+    --version v1 \
+    --num_video_frames $NUM_FRAMES \
+    --data_mixture $DATA_SELECT \
+    --vision_tower google/siglip-so400m-patch14-384 \
+    --mm_vision_select_feature cls_patch \
+    --mm_projector mlp_downsample \
+    --mm_vision_select_layer -2 \
+    --mm_use_im_start_end False \
+    --mm_use_im_patch_token False \
+    --image_aspect_ratio resize \
+    --bf16 True \
+    --output_dir $OUTPUT \
+    --num_train_epochs 100 \
+    --per_device_train_batch_size $bs \
+    --per_device_eval_batch_size $bs \
+    --gradient_accumulation_steps $accu_steps \
+    --evaluation_strategy "no" \
+    --save_strategy "steps" \
+    --save_steps 10000 \
+    --save_total_limit 1 \
+    --learning_rate 1e-4 \
+    --weight_decay 0. \
+    --warmup_ratio 0.00 \
+    --lr_scheduler_type "cosine" \
+    --logging_steps 1 \
+    --tf32 True \
+    --gradient_checkpointing True \
+    --dataloader_num_workers 16 \
+    --lazy_preprocess True \
+    --vflan_no_system_prompt True \
+    --report_to wandb
+
+DATA_SELECT="kg_qa_Query_Video_5_shot"
+OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_5_shot_vila3b_loss2_epoch100_lora_v2"
+
+torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
+    --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
+    llava/train/train_mem.py \
+    --deepspeed ./scripts/zero2.json \
+    --model_name_or_path $MODEL_BASE \
+    --lora_enable True \
+    --lora_llm True \
+    --lora_vt True \
+    --model_max_length 4096 \
+    --version v1 \
+    --num_video_frames $NUM_FRAMES \
+    --data_mixture $DATA_SELECT \
+    --vision_tower google/siglip-so400m-patch14-384 \
+    --mm_vision_select_feature cls_patch \
+    --mm_projector mlp_downsample \
+    --mm_vision_select_layer -2 \
+    --mm_use_im_start_end False \
+    --mm_use_im_patch_token False \
+    --image_aspect_ratio resize \
+    --bf16 True \
+    --output_dir $OUTPUT \
+    --num_train_epochs 100 \
     --per_device_train_batch_size $bs \
     --per_device_eval_batch_size $bs \
     --gradient_accumulation_steps $accu_steps \
@@ -62,6 +152,49 @@ torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
     --vflan_no_system_prompt True \
     --report_to wandb
     
+DATA_SELECT="kg_qa_Query_Video_10_shot"
+OUTPUT="./ckpts_vid/kg_qa_imgx{$NUM_FRAMES}_10_shot_vila3b_loss2_epoch100_lora_v2"
+
+torchrun --nnodes=$n_node --nproc_per_node=$nproc --master_port=25001 \
+    --master_addr $MASTER_ADDR --node_rank=$CURRENT_RANK \
+    llava/train/train_mem.py \
+    --deepspeed ./scripts/zero2.json \
+    --model_name_or_path $MODEL_BASE \
+    --lora_enable True \
+    --lora_llm True \
+    --lora_vt True \
+    --model_max_length 4096 \
+    --version v1 \
+    --num_video_frames $NUM_FRAMES \
+    --data_mixture $DATA_SELECT \
+    --vision_tower google/siglip-so400m-patch14-384 \
+    --mm_vision_select_feature cls_patch \
+    --mm_projector mlp_downsample \
+    --mm_vision_select_layer -2 \
+    --mm_use_im_start_end False \
+    --mm_use_im_patch_token False \
+    --image_aspect_ratio resize \
+    --bf16 True \
+    --output_dir $OUTPUT \
+    --num_train_epochs 100 \
+    --per_device_train_batch_size $bs \
+    --per_device_eval_batch_size $bs \
+    --gradient_accumulation_steps $accu_steps \
+    --evaluation_strategy "no" \
+    --save_strategy "steps" \
+    --save_steps 10000 \
+    --save_total_limit 1 \
+    --learning_rate 1e-4 \
+    --weight_decay 0. \
+    --warmup_ratio 0.00 \
+    --lr_scheduler_type "cosine" \
+    --logging_steps 1 \
+    --tf32 True \
+    --gradient_checkpointing True \
+    --dataloader_num_workers 16 \
+    --lazy_preprocess True \
+    --vflan_no_system_prompt True \
+    --report_to wandb
 
 #    --tune_vision_tower True \
 #    --tune_mm_projector True \
